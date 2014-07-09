@@ -6,22 +6,37 @@
  * Copyright 2014 Diego Vieira <diego@protos.inf.br>
  */
  
- 'use strict';
+var ngIsotope = angular.module('ng-isotope', []);
 
-angular.module('ng-isotope', [])
-    .directive('isotopeGrid', function ($timeout) {
+ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
+        'use strict';
+    
+        if($rootScope.appState.isSmall)
+
         return {
             restrict: 'A',
             scope: {
                 items: '=isotopeGrid',
                 sortBy: '=isotopeSort',
-                sortData: '=isotopeSortData'
+                sortData: '=isotopeSortData',
+                disableFlag: '=disableFlag'
             },
             link: function (scope, element, attrs) {
+
+                //For use in turning off when on mobile
+                if(scope.disableFlag){
+                    ngIsotope.disableFlag = scope.disableFlag;
+                    return;
+                }
+
                 var options = {
                     itemSelector: attrs.isotopeItemSelector || 'div',
-                    layoutMode: attrs.isotopeLayoutMode || 'fitRows',
-                    getSortData: scope.sortData || {}
+                    layoutMode: attrs.isotopeLayoutMode || 'masonry',
+                    getSortData: scope.sortData || {},
+                    masonry: {
+                        columnWidth: attrs.isotopeMasonryColumnWidth,
+                        gutter: attrs.isotopeMasonryGutter
+                    }                    
                 };
 
                 element.isotope(options);
@@ -62,11 +77,13 @@ angular.module('ng-isotope', [])
                 }
             }
         };
-    })
-    .directive('isotopeSortBy', function () {
+    }])
+    .directive('isotopeSortBy', [function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
+                if(ngIsotope.disableFlag) return;
+
                 element.bind('click', function () {
                     var elm = angular.element(element);
                     var parent = elm.parent();
@@ -79,11 +96,13 @@ angular.module('ng-isotope', [])
                 });
             }
         };
-    })
-    .directive('isotopeFilter', function ($timeout) {
+    }])
+    .directive('isotopeFilter', ['$timeout', function ($timeout) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
+                if(ngIsotope.disableFlag) return;
+
                 // @todo make this more user friendly
                 var elm = angular.element(element);
                 var elementType = elm.prop('tagName');
@@ -145,4 +164,4 @@ angular.module('ng-isotope', [])
                 }
             }
         };
-    });
+    }]);
