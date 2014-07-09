@@ -11,13 +11,10 @@ var ngIsotope = angular.module('ng-isotope', []);
 ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
         'use strict';
     
-        if($rootScope.appState.isSmall)
-
         return {
             restrict: 'A',
             scope: {
                 items: '=isotopeGrid',
-                sortBy: '=isotopeSort',
                 sortData: '=isotopeSortData',
                 disableFlag: '=disableFlag'
             },
@@ -33,6 +30,8 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
                     itemSelector: attrs.isotopeItemSelector || 'div',
                     layoutMode: attrs.isotopeLayoutMode || 'masonry',
                     getSortData: scope.sortData || {},
+                    sortBy: attrs.isotopeSortBy,
+                    sortAscending: attrs.isotopeSortAscending !== "false",
                     masonry: {
                         columnWidth: attrs.isotopeMasonryColumnWidth,
                         gutter: attrs.isotopeMasonryGutter
@@ -77,8 +76,9 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
                 }
             }
         };
-    }])
-    .directive('isotopeSortBy', [function () {
+    }]);
+
+ngIsotope.directive('isotopeSortBy', [function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -96,8 +96,9 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
                 });
             }
         };
-    }])
-    .directive('isotopeFilter', ['$timeout', function ($timeout) {
+    }]);
+
+ngIsotope.directive('isotopeFilter', ['$timeout', function ($timeout) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
