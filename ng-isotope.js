@@ -32,10 +32,14 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
                     getSortData: scope.sortData || {},
                     sortBy: attrs.isotopeSortBy,
                     sortAscending: attrs.isotopeSortAscending !== "false",
+                    stamp: ".stamp",
                     masonry: {
                         columnWidth: attrs.isotopeMasonryColumnWidth,
                         gutter: attrs.isotopeMasonryGutter
-                    }                    
+                    },
+                    packery: {
+                        gutter: 36
+                    }
                 };
 
                 element.isotope(options);
@@ -50,7 +54,10 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
                     scope.$on(attrs.isotopeSortEvent, function (data, sort) {
                         // @todo search direction
                         options.sortBy = sort.sort || 'original-order';
-                        element.isotope(options);
+
+                        $timeout(function () {
+                            element.isotope('reloadItems').isotope(options);
+                        });
                     });
                 }
 
