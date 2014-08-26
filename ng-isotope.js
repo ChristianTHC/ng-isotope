@@ -16,7 +16,7 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
             scope: {
                 items: '=isotopeGrid',
                 sortData: '=isotopeSortData',
-                disableFlag: '=disableFlag'
+                disableFlag: '=isotopeDisableFlag'
             },
             link: function (scope, element, attrs) {
 
@@ -43,6 +43,12 @@ ngIsotope.directive('isotopeGrid', ['$rootScope', '$timeout', function ($rootSco
                 };
 
                 element.isotope(options);
+
+                //Trigger reflow on resize of container
+                element.on("resize", function(){
+                    element.isotope(options);
+                })
+
 
                 scope.$watch('items', function () {
                     $timeout(function () {
